@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block head %}
+<link rel="stylesheet" href="{% static 'youtubedl/home_style.css' %}">
+{% endblock %}
+
+{% block content %}
+
+<div class="container">
+    <h1>Youtube Downloader</h1>
+    <form action="{% url 'submit_download_request' %}" method="post">
+        {% csrf_token %}
+        <input class="linkInput" type="text" name="link" placeholder="Youtube Link">
+        <button class="button" type="submit">
+            Submit
+        </button>
+    </form>
+</div>
+
+{% endblock %}

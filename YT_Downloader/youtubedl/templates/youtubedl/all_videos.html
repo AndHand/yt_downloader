@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <title>Youtube Downloader</title>
+    </head>
+    <body>
+        <h1>All videos</h1>
+        <ul>
+            {% for video in videos %}
+                <li>
+                    <p>{{video.video_title}}</p>
+                </li>
+            {% endfor %}
+        </ul>
+    </body>
+</html>

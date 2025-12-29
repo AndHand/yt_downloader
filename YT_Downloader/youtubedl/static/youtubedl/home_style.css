@@ -1,0 +1,62 @@
+.InputBox {
+    margin: auto;
+    width: 70%;
+    text-align: center;
+    height: 100%;
+}
+
+.linkInput{
+    resize: none;
+    width: 80%;
+    border: 2px solid blue;
+    padding: 12px 20px;
+    border-radius: 4px;
+    box-sizing: border-box;
+    font-size: larger;
+    text-align: center;
+}
+
+.linkInput[type=text]:focus {
+    border: 2px solid green;
+}
+
+.button {
+    margin-left: 5px;
+    width: 10%;
+    color: white;
+    padding: 16px;
+    text-align: center;
+    font-size: 16px;
+    background-color: #007bff;
+    border: none;
+    border-radius: 4px;
+}
+
+button:hover {
+    background-color: #0056b3;
+}
+
+body {
+    margin: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background-color: #f0f2f5;
+    font-family: Arial, sans-serif;
+}
+
+form {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.container {
+    background-color: white;
+    padding: 30px;
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    width: 300px;
+}

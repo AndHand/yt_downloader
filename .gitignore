@@ -1,0 +1,7 @@
+.venv/
+data/
+.mypy_cache/
+*.sqlite3
+__pycache__/
+*/test_sender.py
+migrations/

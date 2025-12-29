@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+
+{% extends "base.html" %}
+
+{% block content %}
+<h1>Video download</h1>
+<p>status: {{job_info.status}}</p>
+<p>link: {{job_info.link}}</p>
+<p>progress: {{job_info.progress}}%</p>
+{% if job_info.status == "finished" %}
+<a href="{% url 'get_video_file' id %}" download>
+    <button>Download</button>
+</a>
+{% endif %}
+{% endblock %}
