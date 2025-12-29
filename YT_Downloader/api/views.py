@@ -24,8 +24,10 @@ def start_download(request):
     data = request.body.decode()
     json_data = json.loads(data)
     video_queue = VideoQueue()
-    message_id = video_queue.send_message(json_data["link"])
+    youtube_link = json_data["link"]
+    message_id = video_queue.send_message(youtube_link)
     keydb = KeyStore()
+    keydb.insert_job(message_id, youtube_link, "waiting", 0)
     keydb.set_last_created_id(message_id)
     return HttpResponse(message_id)
 

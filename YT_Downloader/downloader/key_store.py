@@ -55,9 +55,11 @@ class KeyStore():
             self.valkey.set(self.LAST_COMPLETED_JOB_ID_KEY, id)
 
     def insert_started_job(self, job_id, link):
-        job_status = JobInfo(link, "downloading", 0)
-        job_status_json = job_status.to_json()
-        self.valkey.set(job_id, job_status_json)
+        self.insert_job(job_id, link, "downloading", 0)
+
+    def insert_job(self, job_id, link, status, progress=0):
+        job_info = JobInfo(link, status, progress)
+        self.valkey.set(job_id, job_info.to_json())
 
     def insert_failed_job(self, job_id):
         job_status = self.valkey.get(job_id)

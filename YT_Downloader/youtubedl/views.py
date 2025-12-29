@@ -1,8 +1,6 @@
-import json
 from django.http import HttpResponseRedirect
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render
 import requests
-from youtubedl.forms import YoutubeForm
 from .models import DownloadedVideo
 from downloader.key_store import KeyStore
 
