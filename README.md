@@ -8,12 +8,12 @@ The project has multiple parts
 
 ## Django Server
 Acts as a webserver for the website and the api.
-Submits work messages to rabbitmq
+Submits work messages to rabbitmq.
 
 ## RabbitMQ worker (YT_Downloader/downloader/worker.py)
-Reads messages from rabbitmq and downloads the videos from youtube using the python library yt-dlp
+Reads messages from rabbitmq and downloads the videos from youtube using the python library yt-dlp.
 
 ## Valkey
-A simple key-value store for information about the current status of the rabbitmq message queue
-contains information like id of last submitted job, progress of jobs, and where to find the output file of jobs
+A simple key-value store for information about the current status of the rabbitmq message queue.
+Contains information like id of last submitted job, progress of jobs, and where to find the output file of jobs.
 This is used to keep track of the size of the message queue, the queue position of a certain job and other things.
