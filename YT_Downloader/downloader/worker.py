@@ -13,7 +13,7 @@ class DownloadManager():
         self.video_queue = VideoQueue()
         self.keystore = KeyStore()
         self.stop_event = threading.Event()
-        self.rate_limiter = RateLimiter(interval=30, per_interval=1, stop_event=self.stop_event)
+        self.rate_limiter = RateLimiter(interval=60, per_interval=3, stop_event=self.stop_event)
 
     def start(self):
         partial_callback = functools.partial(self.callback_wrapper, real_callback=self.mq_callback)

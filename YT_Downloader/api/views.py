@@ -1,4 +1,4 @@
-from django.http import FileResponse, HttpResponse, JsonResponse
+from django.http import FileResponse, HttpResponse, HttpResponseNotFound, JsonResponse
 from django.shortcuts import render
 from django.views.decorators.http import require_http_methods
 from django.views.decorators.csrf import csrf_exempt
@@ -7,14 +7,12 @@ import json
 
 from downloader.video_queue import VideoQueue
 
-#use jsonresponse
-
 @require_http_methods(["GET"])
 def get_job_progress(request, id):
     keydb = KeyStore()
-    progress = keydb.get_job_info(id)
+    progress = keydb.get_job(id)
     if progress == None:
-        return HttpResponse("Video not found")
+        return HttpResponseNotFound("Video not found")
     else:
         return HttpResponse(progress.to_json())
 
@@ -27,15 +25,14 @@ def start_download(request):
     youtube_link = json_data["link"]
     message_id = video_queue.send_message(youtube_link)
     keydb = KeyStore()
-    keydb.insert_job(message_id, youtube_link, "waiting", 0)
+    keydb.insert_job(message_id, youtube_link)
     keydb.set_last_created_id(message_id)
     return HttpResponse(message_id)
 
 @require_http_methods(["GET"])
 def get_video(request, id):
     keydb = KeyStore()
-    job_info = keydb.get_job_info(id)
-    filepath = keydb.get_downloaded_file(job_info.link)
+    filepath = keydb.get_job_output_file(id)
     if filepath != None:
         return FileResponse(open(filepath, 'rb'))
 

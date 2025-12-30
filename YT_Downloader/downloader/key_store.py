@@ -39,7 +39,7 @@ class KeyStore():
 
     def get_job(self, job_id):
         job_info = self.valkey.get(job_id)
-        job_info = JobInfo.from_json(job_info)
+        job_info = JobInfo.from_json(job_info) if job_info != None else None
         return job_info
 
     def get_job_position(self, job_id):
@@ -47,40 +47,37 @@ class KeyStore():
         position = job_id - int(last_completed_job)
         return max(position, 0)
 
-    def set_completed_job(self, id, filename):
-        job_info = self.get_job(id)
-        job_info.status = "finished"
+    def set_completed_job(self, job_id, filename):
+        job_info = self.get_job(job_id)
+        job_info.status = JobStatus.FINISHED
         job_info.progress = 100
-        self.valkey.set(id, job_info.to_json())
+        self.valkey.set(job_id, job_info.to_json())
         self.valkey.set(job_info.link, filename)
         last_id = self.valkey.get(self.LAST_COMPLETED_JOB_ID_KEY)
         last_id = int(last_id) if last_id != None else 0
-        if id > last_id:
-            self.valkey.set(self.LAST_COMPLETED_JOB_ID_KEY, id)
+        if job_id > last_id:
+            self.valkey.set(self.LAST_COMPLETED_JOB_ID_KEY, job_id)
 
     def insert_started_job(self, job_id, link):
-        self.insert_job(job_id, link, "downloading", 0)
+        self.insert_job(job_id, link, JobStatus.DOWNLOADING, 0)
 
-    def insert_job(self, job_id, link, status, progress=0):
+    def insert_job(self, job_id, link, status=JobStatus.QUEUED, progress=0):
         job_info = JobInfo(link, status, progress)
         self.valkey.set(job_id, job_info.to_json())
 
     def set_failed_job(self, job_id):
         job_info = self.get_job(job_id)
-        new_status = JobInfo(job_info.link, "failed", 0)
+        new_status = JobInfo(job_info.link, JobStatus.FAILED, 0)
         self.valkey.set(job_id, new_status.to_json())
-
-    def get_job_info(self, job_id):
-        data = self.valkey.get(job_id)
-        return JobInfo.from_json(data) if data != None else None
 
     def set_job_progress(self, job_id, progress):
         job_info = self.get_job(job_id)
         job_info.progress = progress
         self.valkey.set(job_id, job_info.to_json())
 
-    def get_downloaded_file(self, link):
-        return self.valkey.get(link)
+    def get_job_output_file(self, job_id):
+        job_info = self.get_job(job_id)
+        return self.valkey.get(job_info.link)
     
     def set_last_created_id(self, id):
         last_created_id = self.valkey.get(self.LAST_QUEUED_JOB_ID_KEY)

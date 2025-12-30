@@ -2,13 +2,10 @@ async function GetProgress(){
     let url = window.location.href
     let splitUrl = url.split("/")
     let video_id = Number(splitUrl[splitUrl.length - 1])
-    let current_progress = await fetch('http://localhost:8000/api/progress/' + video_id)
+    let current_progress = await fetch('/api/progress/' + video_id)
         .then((response)=>{
             if(response.ok){
                 return response.text();
-            }
-            else{
-                throw new Error('Something went wrong!');
             }
         })
         .then(async (data)=>{
