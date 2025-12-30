@@ -37,14 +37,18 @@ class KeyStore():
     def __init__(self, host="localhost", port=6379):
         self.valkey = valkey.Valkey(host=host, port=port, db=0, decode_responses=True)
 
+    def get_job(self, job_id):
+        job_info = self.valkey.get(job_id)
+        job_info = JobInfo.from_json(job_info)
+        return job_info
+
     def get_job_position(self, job_id):
         last_completed_job = self.valkey.get(self.LAST_COMPLETED_JOB_ID_KEY)
         position = job_id - int(last_completed_job)
         return max(position, 0)
 
-    def insert_completed_job(self, id, filename):
-        job_info = self.valkey.get(id)
-        job_info = JobInfo.from_json(job_info)
+    def set_completed_job(self, id, filename):
+        job_info = self.get_job(id)
         job_info.status = "finished"
         job_info.progress = 100
         self.valkey.set(id, job_info.to_json())
@@ -61,10 +65,9 @@ class KeyStore():
         job_info = JobInfo(link, status, progress)
         self.valkey.set(job_id, job_info.to_json())
 
-    def insert_failed_job(self, job_id):
-        job_status = self.valkey.get(job_id)
-        job_status = JobInfo.from_json(job_status)
-        new_status = JobInfo(job_status.link, "failed", 0)
+    def set_failed_job(self, job_id):
+        job_info = self.get_job(job_id)
+        new_status = JobInfo(job_info.link, "failed", 0)
         self.valkey.set(job_id, new_status.to_json())
 
     def get_job_info(self, job_id):
@@ -72,13 +75,9 @@ class KeyStore():
         return JobInfo.from_json(data) if data != None else None
 
     def set_job_progress(self, job_id, progress):
-        current_progress = self.valkey.get(job_id)
-        if current_progress == None:
-            return
-        
-        job_status = JobInfo.from_json(current_progress)
-        job_status.progress = progress
-        self.valkey.set(job_id, job_status.to_json())
+        job_info = self.get_job(job_id)
+        job_info.progress = progress
+        self.valkey.set(job_id, job_info.to_json())
 
     def get_downloaded_file(self, link):
         return self.valkey.get(link)

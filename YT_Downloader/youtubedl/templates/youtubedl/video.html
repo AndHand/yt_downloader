@@ -1,15 +1,30 @@
-<!DOCTYPE html>
-
 {% extends "base.html" %}
 
+{% load static %}
+
+{% block head %}
+<link rel="stylesheet" href="{% static 'youtubedl/home_style.css' %}">
+<script
+  src="{% static 'youtubedl/update.js' %}">
+</script>
+
+{% endblock %}
+
 {% block content %}
-<h1>Video download</h1>
-<p>status: {{job_info.status}}</p>
-<p>link: {{job_info.link}}</p>
-<p>progress: {{job_info.progress}}%</p>
-{% if job_info.status == "finished" %}
+<div class="container">
+    <h1>Video download</h1>
+    <p id="status">status: {{job_info.status}}</p>
+    <p>link: {{job_info.link}}</p>
+    <p id="progress">progress: {{job_info.progress}}%</p>
+    <div>
+        <div class="progress" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="50" aria-labelledby="pblabel">
+            <div id="pb" class="progress-bar" style="width:11%">
+        </div>
+    </div>
+</div>
+
 <a href="{% url 'get_video_file' id %}" download>
-    <button>Download</button>
+    <button id="downloadButton" disabled>Download</button>
 </a>
-{% endif %}
+
 {% endblock %}

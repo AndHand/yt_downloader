@@ -50,13 +50,14 @@ class DownloadManager():
                 current_progress = progress_percent
 
         def postprocessor_callback(filename):
-            self.keystore.insert_completed_job(message.id, filename)
+            self.keystore.set_completed_job(message.id, filename)
 
         def start_download():
             try:
                 download_video(message.content, progress_callback, postprocessor_callback)
-            except Exception:
-                self.keystore.insert_failed_job(message.id)
+            except Exception as e:
+                print(e)
+                self.keystore.set_failed_job(message.id)
 
         self.keystore.insert_started_job(message.id, message.content)
 
