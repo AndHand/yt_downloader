@@ -36,6 +36,14 @@ button:hover {
     background-color: #0056b3;
 }
 
+button:disabled {
+    background-color: #cccccc;
+    color: #666666;
+    cursor: not-allowed;
+    border: 1px solid #999999;
+    opacity: 0.6;
+}
+
 body {
     margin: 0;
     display: flex;
@@ -46,7 +54,7 @@ body {
     font-family: Arial, sans-serif;
 }
 
-form {
+.linkLine {
     display: flex;
     justify-content: center;
     align-items: center;

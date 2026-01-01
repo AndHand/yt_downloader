@@ -11,10 +11,16 @@ from downloader.video_queue import VideoQueue
 def get_job_progress(request, id):
     keydb = KeyStore()
     progress = keydb.get_job(id)
+    response = {
+        "link": progress.link,
+        "progress": progress.progress,
+        "status": progress.status,
+        "queue_position": keydb.get_job_position(id)
+    }
     if progress == None:
         return HttpResponseNotFound("Video not found")
     else:
-        return HttpResponse(progress.to_json())
+        return HttpResponse(json.dumps(response))
 
 @csrf_exempt
 @require_http_methods(["POST"])
@@ -26,7 +32,6 @@ def start_download(request):
     message_id = video_queue.send_message(youtube_link)
     keydb = KeyStore()
     keydb.insert_job(message_id, youtube_link)
-    keydb.set_last_created_id(message_id)
     return HttpResponse(message_id)
 
 @require_http_methods(["GET"])

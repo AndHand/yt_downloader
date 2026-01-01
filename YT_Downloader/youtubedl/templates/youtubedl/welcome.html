@@ -11,10 +11,28 @@
     <h1>Youtube Downloader</h1>
     <form action="{% url 'submit_download_request' %}" method="post">
         {% csrf_token %}
-        <input class="linkInput" type="text" name="link" placeholder="Youtube Link">
-        <button class="button" type="submit">
-            Submit
-        </button>
+        <div class="linkLine">
+            <input class="linkInput" type="text" name="link" placeholder="Youtube Link">
+            <button class="button" type="submit">
+                Submit
+            </button>
+        </div>
+        <div class="accordion" id="accordionPanelsStayOpenExample" style="margin-top: 20px;">
+        <div class="accordion-item">
+            <h2 class="accordion-header">
+            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapseOne" aria-expanded="true" aria-controls="panelsStayOpen-collapseOne">
+                Settings
+            </button>
+            </h2>
+            <div id="panelsStayOpen-collapseOne" class="accordion-collapse collapse">
+            <div class="accordion-body">
+                <select class="form-select" name="file_type" aria-label="Default select example">
+                    <option selected value="mp4">mp4</option>
+                    <option value="mp3">mp3</option>
+                </select>
+            </div>
+            </div>
+        </div>
     </form>
 </div>
 

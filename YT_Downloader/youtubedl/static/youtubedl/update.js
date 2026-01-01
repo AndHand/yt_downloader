@@ -13,16 +13,36 @@ async function GetProgress(){
             let progress = Number(jsonData.progress);
             let progressBar = document.getElementById("pb");
             progressBar.style.width = progress + "%";
+            
+            let status = ""
+            let continueLoop = true
+            if (jsonData.status === "queued"){
+                status = "In queue: " + jsonData.queue_position;
+            }
+            else if(jsonData.status === "downloading"){
+                if(progress >= 100){
+                    status = "Converting..."
+                }
+                else{
+                    status = "Downloading: " + Math.floor(progress) + "%";
+                }
+            }
+            else if(jsonData.status === "finished"){
+                status = "Finished"
+                continueLoop = false;
 
-            let statusText = document.getElementById("status");
-            statusText.innerText = jsonData.status;
+                let downloadButton = document.getElementById("downloadButton");
+                downloadButton.disabled = false;
+            }
+            else {
+                status = "Failed";
+                continueLoop = false;
+            }
 
             let progressValue = document.getElementById("progress");
-            progressValue.innerText = progress + "%";
-
-            let downloadButton = document.getElementById("downloadButton");
-            downloadButton.disabled = progress < 100
-            return progress
+            progressValue.innerText = status;
+            
+            return continueLoop;
         })
         .catch((error)=>{
             console.error(error);
@@ -31,8 +51,8 @@ async function GetProgress(){
 }
 
 let updater = setInterval(async () =>{
-    let current_progress = await GetProgress()
-    if(current_progress >= 100){
+    let continueLoop = await GetProgress()
+    if(!continueLoop){
         clearInterval(updater)
     }
 }, 500)

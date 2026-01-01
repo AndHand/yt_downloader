@@ -20,6 +20,9 @@ class Downloader():
     def add_post_hook(self, func):
         self.options["post_hooks"].append(func)
 
+    def set_file_output_type(self, new_type):
+        self.options["merge_output_format"] = new_type
+
     def download_video(self, url):
         with yt_dlp.YoutubeDL(self.options) as downloader:
             downloader.download(url)

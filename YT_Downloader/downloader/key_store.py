@@ -29,13 +29,16 @@ class JobInfo():
         )
         return message
 
+pool = valkey.ConnectionPool(host='localhost', port=6379, db=0, decode_responses=True, max_connections=5)
+valkey_client = valkey.Valkey(connection_pool=pool)
 
 class KeyStore():
     LAST_COMPLETED_JOB_ID_KEY = "last_completed_id"
     LAST_QUEUED_JOB_ID_KEY = "last_queued_job"
+    NEXT_JOB_ID_KEY = "next_job_id"
 
-    def __init__(self, host="localhost", port=6379):
-        self.valkey = valkey.Valkey(host=host, port=port, db=0, decode_responses=True)
+    def __init__(self):
+        self.valkey = valkey_client
 
     def get_job(self, job_id):
         job_info = self.valkey.get(job_id)
@@ -44,11 +47,21 @@ class KeyStore():
 
     def get_job_position(self, job_id):
         last_completed_job = self.valkey.get(self.LAST_COMPLETED_JOB_ID_KEY)
+        last_completed_job = last_completed_job if last_completed_job != None else 0
         position = job_id - int(last_completed_job)
         return max(position, 0)
+    
+    def get_next_job_id(self):
+        value = self.valkey.get(self.NEXT_JOB_ID_KEY)
+        next_value = value + 1
+        self.valkey.set(self.NEXT_JOB_ID_KEY, next_value)
+        return value
 
     def set_completed_job(self, job_id, filename):
         job_info = self.get_job(job_id)
+        if job_info == None:
+            print("Tried to complete non-existent job with id " + str(job_id))
+            return
         job_info.status = JobStatus.FINISHED
         job_info.progress = 100
         self.valkey.set(job_id, job_info.to_json())
@@ -63,6 +76,7 @@ class KeyStore():
 
     def insert_job(self, job_id, link, status=JobStatus.QUEUED, progress=0):
         job_info = JobInfo(link, status, progress)
+        self.set_last_created_id(job_id)
         self.valkey.set(job_id, job_info.to_json())
 
     def set_failed_job(self, job_id):
