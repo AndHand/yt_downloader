@@ -1,0 +1,46 @@
+services:
+  web:
+    build:
+      context: .
+      dockerfile: YT_Downloader/Dockerfile
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./YT_Downloader:/app/YT_Downloader
+      - ./shared:/app/shared
+    environment:
+      - PYTHONPATH=/app
+    volumes:
+      - ./data:/usr/local/app/data
+    depends_on:
+      - valkey
+      - rabbitmq
+
+  worker:
+    build:
+      context: .
+      dockerfile: worker/Dockerfile
+    volumes:
+      - ./worker:/app/worker
+      - ./shared:/app/shared
+      - ./data:/usr/local/app/data
+    environment:
+      - PYTHONPATH=/app
+    depends_on:
+      - valkey
+      - rabbitmq
+
+  valkey:
+    image: valkey/valkey:latest
+    restart: always
+    container_name: valkey
+    ports:
+      - 6379:6379
+
+  rabbitmq:
+    image: rabbitmq:4-management
+    container_name: rabbitmq
+    ports:
+      - 5672:5672
+      - 15672:15672
+    restart: always
