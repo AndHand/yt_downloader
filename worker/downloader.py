@@ -1,12 +1,12 @@
 import yt_dlp
 
 class Downloader():
-    def __init__(self):
+    def __init__(self, data_folder="../data"):
         self.options = {
             'format': 'bestvideo+bestaudio/best',
             'merge_output_format': 'mp4',                
             #'ffmpeg_location': FFMPEG_PATH,              
-            'outtmpl': './data/%(title)s.%(ext)s',              
+            'outtmpl': f'{data_folder}/%(title)s.%(ext)s',              
             'quiet': True,
             'noplaylist': True,
             'remote_components': ["ejs:npm"],
@@ -32,7 +32,7 @@ def download_video(url, progress, postprocessor):
         'format': 'bestvideo+bestaudio/best',
         'merge_output_format': 'mp4',                
         #'ffmpeg_location': FFMPEG_PATH,              
-        'outtmpl': './data/%(title)s.%(ext)s',              
+        'outtmpl': './app/data/%(title)s.%(ext)s',              
         'quiet': True,
         'noplaylist': True,
         'remote_components': ["ejs:npm"],

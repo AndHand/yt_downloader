@@ -2,6 +2,13 @@
 """Django's command-line utility for administrative tasks."""
 import os
 import sys
+from pathlib import Path
+
+# Get the directory containing manage.py
+BASE_DIR = Path(__file__).resolve().parent
+
+# Add the parent directory (the root of the repo) to the path
+sys.path.append(str(BASE_DIR.parent))
 
 
 def main():

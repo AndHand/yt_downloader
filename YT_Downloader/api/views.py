@@ -2,10 +2,9 @@ from django.http import FileResponse, HttpResponse, HttpResponseNotFound, JsonRe
 from django.shortcuts import render
 from django.views.decorators.http import require_http_methods
 from django.views.decorators.csrf import csrf_exempt
-from downloader.key_store import KeyStore
+from shared.key_store import KeyStore
 import json
-
-from downloader.video_queue import VideoQueue
+from shared.video_queue import VideoQueue
 
 @require_http_methods(["GET"])
 def get_job_progress(request, id):

@@ -1,8 +1,9 @@
 import functools
+import time
 from downloader import download_video
 from rate_limiter import RateLimiter
-from video_queue import VideoQueue
-from key_store import KeyStore
+from shared.video_queue import VideoQueue
+from shared.key_store import KeyStore
 import threading
 from concurrent.futures import ThreadPoolExecutor
 
@@ -10,10 +11,21 @@ class DownloadManager():
     def __init__(self, num_workers=4):
         self.num_workers = num_workers
         self.threadpool = ThreadPoolExecutor(max_workers=self.num_workers)
-        self.video_queue = VideoQueue()
         self.keystore = KeyStore()
         self.stop_event = threading.Event()
         self.rate_limiter = RateLimiter(interval=60, per_interval=3, stop_event=self.stop_event)
+        connectCounter = 0
+        while connectCounter < 3:
+            try:
+                connectCounter += 1
+                self.video_queue = VideoQueue()
+                print("Connected")
+                break
+            except Exception as e:
+                time.sleep(5)
+                if connectCounter >= 3:
+                    print("Failed")
+                    raise e
 
     def start(self):
         partial_callback = functools.partial(self.callback_wrapper, real_callback=self.mq_callback)

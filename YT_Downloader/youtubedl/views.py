@@ -3,7 +3,7 @@ from django.shortcuts import render
 import requests
 from django.views.decorators.http import require_http_methods
 from .models import DownloadedVideo
-from downloader.key_store import KeyStore
+from shared.key_store import KeyStore
 
 def downloadPage(request):
     return render(request, "youtubedl/welcome.html")

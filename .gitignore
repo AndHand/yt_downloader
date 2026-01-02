@@ -5,4 +5,5 @@ data/
 __pycache__/
 migrations/
 test_links.txt
-.env
+.env*
+*.egg-info

@@ -29,7 +29,7 @@ class JobInfo():
         )
         return message
 
-pool = valkey.ConnectionPool(host='localhost', port=6379, db=0, decode_responses=True, max_connections=5)
+pool = valkey.ConnectionPool(host='valkey', port=6379, db=0, decode_responses=True, max_connections=5)
 valkey_client = valkey.Valkey(connection_pool=pool)
 
 class KeyStore():
@@ -66,6 +66,9 @@ class KeyStore():
         job_info.progress = 100
         self.valkey.set(job_id, job_info.to_json())
         self.valkey.set(job_info.link, filename)
+        self.set_last_completed_job(job_id)
+
+    def set_last_completed_job(self, job_id):
         last_id = self.valkey.get(self.LAST_COMPLETED_JOB_ID_KEY)
         last_id = int(last_id) if last_id != None else 0
         if job_id > last_id:
@@ -83,6 +86,7 @@ class KeyStore():
         job_info = self.get_job(job_id)
         new_status = JobInfo(job_info.link, JobStatus.FAILED, 0)
         self.valkey.set(job_id, new_status.to_json())
+        self.set_last_completed_job(job_id)
 
     def set_job_progress(self, job_id, progress):
         job_info = self.get_job(job_id)

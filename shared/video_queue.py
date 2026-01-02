@@ -27,9 +27,9 @@ class VideoQueue:
     id_lock = threading.Lock()
     QUEUE_NAME = "video_download"
 
-    def __init__(self, url="localhost"):
+    def __init__(self, url="rabbitmq"):
         self.connection_url = url
-        self.connection = pika.BlockingConnection(pika.ConnectionParameters(url))
+        self.connection = pika.BlockingConnection(pika.ConnectionParameters(url, port=5672))
         self.channel = self.connection.channel()  
         self.channel.queue_declare(queue=VideoQueue.QUEUE_NAME)
         
