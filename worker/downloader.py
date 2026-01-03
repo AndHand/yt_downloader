@@ -1,7 +1,8 @@
 import yt_dlp
+from settings import DATA_DIR
 
 class Downloader():
-    def __init__(self, data_folder="../data"):
+    def __init__(self, data_folder=DATA_DIR):
         self.options = {
             'format': 'bestvideo+bestaudio/best',
             'merge_output_format': 'mp4',                
@@ -32,7 +33,7 @@ def download_video(url, progress, postprocessor):
         'format': 'bestvideo+bestaudio/best',
         'merge_output_format': 'mp4',                
         #'ffmpeg_location': FFMPEG_PATH,              
-        'outtmpl': './app/data/%(title)s.%(ext)s',              
+        'outtmpl': f'{DATA_DIR}/%(title)s.%(ext)s',              
         'quiet': True,
         'noplaylist': True,
         'remote_components': ["ejs:npm"],

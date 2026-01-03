@@ -10,7 +10,7 @@ The project has multiple parts
 Acts as a webserver for the website and the api.
 Submits work messages to rabbitmq.
 
-## RabbitMQ worker (YT_Downloader/downloader/worker.py)
+## RabbitMQ worker (worker/worker.py)
 Reads messages from rabbitmq and downloads the videos from youtube using the python library yt-dlp.
 
 ## Valkey

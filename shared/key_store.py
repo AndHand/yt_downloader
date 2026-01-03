@@ -2,6 +2,7 @@ from dataclasses import dataclass
 import valkey
 import json
 from enum import Enum
+from shared.settings import VALKEY_URL
 
 class JobStatus(str, Enum):
     QUEUED = "queued"
@@ -29,7 +30,7 @@ class JobInfo():
         )
         return message
 
-pool = valkey.ConnectionPool(host='valkey', port=6379, db=0, decode_responses=True, max_connections=5)
+pool = valkey.ConnectionPool(host=VALKEY_URL, port=6379, db=0, decode_responses=True, max_connections=5)
 valkey_client = valkey.Valkey(connection_pool=pool)
 
 class KeyStore():

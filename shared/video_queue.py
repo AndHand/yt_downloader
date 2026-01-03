@@ -2,7 +2,7 @@ import pika
 import json
 from dataclasses import dataclass
 import threading
-import functools
+from shared.settings import RABBITMQ_URL
 
 @dataclass
 class VideoQueueMessage:
@@ -27,9 +27,9 @@ class VideoQueue:
     id_lock = threading.Lock()
     QUEUE_NAME = "video_download"
 
-    def __init__(self, url="rabbitmq"):
+    def __init__(self, url=RABBITMQ_URL, port=5672):
         self.connection_url = url
-        self.connection = pika.BlockingConnection(pika.ConnectionParameters(url, port=5672))
+        self.connection = pika.BlockingConnection(pika.ConnectionParameters(url, port=port))
         self.channel = self.connection.channel()  
         self.channel.queue_declare(queue=VideoQueue.QUEUE_NAME)
         
