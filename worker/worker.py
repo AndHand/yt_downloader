@@ -1,9 +1,9 @@
 import functools
 import time
-from downloader import download_video
+from downloader import Downloader
 from rate_limiter import RateLimiter
 from shared.video_queue import VideoQueue
-from shared.key_store import KeyStore
+from shared.key_store import JobTracker
 import threading
 from concurrent.futures import ThreadPoolExecutor
 
@@ -11,9 +11,10 @@ class DownloadManager():
     def __init__(self, num_workers=4):
         self.num_workers = num_workers
         self.threadpool = ThreadPoolExecutor(max_workers=self.num_workers)
-        self.keystore = KeyStore()
+        self.job_tracker = JobTracker()
         self.stop_event = threading.Event()
         self.rate_limiter = RateLimiter(interval=60, per_interval=3, stop_event=self.stop_event)
+        self.downloader = Downloader()
         connectCounter = 0
         while connectCounter < 3:
             try:
@@ -58,20 +59,21 @@ class DownloadManager():
             total_bytes = int(info["total_bytes"])
             progress_percent = downloaded_bytes / total_bytes * 100
             if progress_percent > current_progress:
-                self.keystore.set_job_progress(message.id, progress_percent)
+                self.job_tracker.set_job_progress(message.id, progress_percent)
                 current_progress = progress_percent
 
         def postprocessor_callback(filename):
-            self.keystore.set_completed_job(message.id, filename)
+            self.job_tracker.set_completed_job(message.id, filename)
 
         def start_download():
             try:
-                download_video(message.content, progress_callback, postprocessor_callback)
+                info = self.downloader.get_video_info(message.content)
+                self.downloader.download_video(message.content, progress_callback, postprocessor_callback)
             except Exception as e:
                 print(e)
-                self.keystore.set_failed_job(message.id)
+                self.job_tracker.set_failed_job(message.id)
 
-        self.keystore.insert_started_job(message.id, message.content)
+        self.job_tracker.insert_started_job(message.id, message.content)
 
         if self.rate_limiter != None:
             self.rate_limiter.execute(lambda: start_download())

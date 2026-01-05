@@ -33,7 +33,7 @@ class JobInfo():
 pool = valkey.ConnectionPool(host=VALKEY_URL, port=6379, db=0, decode_responses=True, max_connections=5)
 valkey_client = valkey.Valkey(connection_pool=pool)
 
-class KeyStore():
+class JobTracker():
     LAST_COMPLETED_JOB_ID_KEY = "last_completed_id"
     LAST_QUEUED_JOB_ID_KEY = "last_queued_job"
     NEXT_JOB_ID_KEY = "next_job_id"
@@ -51,13 +51,13 @@ class KeyStore():
         last_completed_job = last_completed_job if last_completed_job != None else 0
         position = job_id - int(last_completed_job)
         return max(position, 0)
-    
+    """
     def get_next_job_id(self):
         value = self.valkey.get(self.NEXT_JOB_ID_KEY)
         next_value = value + 1
         self.valkey.set(self.NEXT_JOB_ID_KEY, next_value)
         return value
-
+    """
     def set_completed_job(self, job_id, filename):
         job_info = self.get_job(job_id)
         if job_info == None:

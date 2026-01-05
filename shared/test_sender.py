@@ -1,4 +1,4 @@
-from key_store import KeyStore
+from key_store import JobTracker
 from video_queue import VideoQueue
 import json
 import aiohttp
@@ -16,7 +16,7 @@ def send_links_to_queue():
         video_queue.send_message(link)
 
 def get_status():
-    keystore = KeyStore()
+    keystore = JobTracker()
     print(keystore.get_last_created_id())
 
 async def send_links_to_website():
